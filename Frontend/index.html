@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TaskFlow - Smart Todo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="logo">TaskFlow</div>
+
+    <div class="nav-actions">
+        <button id="logoutBtn" class="nav-btn logout">Logout</button>
+    </div>
+</nav>
+
+<!-- HERO / HOME -->
+<section class="hero">
+    <h1>Organize Your Life</h1>
+    <p>Simple. Fast. Powerful task management.</p>
+</section>
+
+
+<!-- AUTH SECTION -->
+<div id="authContainer" class="app auth-card">
+    <h2 id="authTitle">Login</h2>
+
+    <div class="input-group">
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button id="authBtn">Login</button>
+    </div>
+
+    <p id="toggleAuth">Don't have an account? <span>Sign Up</span></p>
+</div>
+
+
+<!-- TODO DASHBOARD -->
+<div id="todoContainer" class="app dashboard" style="display:none">
+
+    <div class="dashboard-header">
+        <h2>Your Tasks</h2>
+        <span id="welcomeMsg"></span>
+    </div>
+
+    <div class="input-box">
+        <input type="text" id="taskInput" placeholder="Enter a task">
+        <button id="addBtn">Add Task</button>
+    </div>
+
+    <ul id="taskList"></ul>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

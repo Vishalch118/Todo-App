@@ -1,0 +1,208 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#667eea,#764ba2);
+min-height:100vh;
+color:#333;
+}
+
+/* NAVBAR */
+
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:18px 40px;
+
+background: linear-gradient(90deg, #667eea, #764ba2);
+
+color:white;
+box-shadow:0 4px 20px rgba(0,0,0,0.15);
+}
+
+.logo{
+font-size:22px;
+font-weight:600;
+color:white;
+}
+
+.nav-actions{
+display:flex;
+gap:12px;
+}
+
+.nav-btn{
+padding:8px 16px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-size:14px;
+background:#667eea;
+color:white;
+}
+
+.logout{
+background:#ef4444;
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+color:white;
+margin-top:60px;
+margin-bottom:30px;
+}
+
+.hero h1{
+font-size:40px;
+margin-bottom:10px;
+}
+
+.hero p{
+font-size:16px;
+opacity:0.9;
+}
+
+/* MAIN CARD */
+
+.app{
+background:white;
+width:420px;
+margin:0 auto;
+margin-top:20px;
+padding:30px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* AUTH */
+
+.auth-card h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+.input-group{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.input-group input{
+padding:10px;
+border:1px solid #ddd;
+border-radius:6px;
+}
+
+#authBtn{
+background:#764ba2;
+color:white;
+padding:10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+#toggleAuth{
+text-align:center;
+margin-top:12px;
+font-size:14px;
+}
+
+#toggleAuth span{
+color:#667eea;
+cursor:pointer;
+}
+
+/* DASHBOARD */
+
+.dashboard-header{
+display:flex;
+justify-content:space-between;
+margin-bottom:15px;
+}
+
+/* INPUT */
+
+.input-box{
+display:flex;
+gap:10px;
+margin-bottom:20px;
+}
+
+.input-box input{
+flex:1;
+padding:10px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+.input-box button{
+background:#667eea;
+border:none;
+color:white;
+padding:10px 14px;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* TASK LIST */
+
+ul{
+list-style:none;
+}
+
+li{
+background:#f5f5f5;
+padding:10px;
+margin-bottom:10px;
+border-radius:6px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+li.completed span{
+text-decoration:line-through;
+opacity:0.6;
+}
+
+/* ACTION BUTTONS */
+
+.actions button{
+border:none;
+padding:5px 8px;
+border-radius:4px;
+margin-left:6px;
+cursor:pointer;
+}
+
+.done{
+background:#22c55e;
+color:white;
+}
+
+.edit{
+background:#fbbf24;
+}
+
+.delete{
+background:#ef4444;
+color:white;
+}
+
+.edit-input{
+padding:6px;
+border:1px solid #ccc;
+border-radius:4px;
+}
+
+#logoutBtn{
+display:none;
+}
