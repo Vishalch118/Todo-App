@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://todo-app-0cnx.onrender.com";
 let token = localStorage.getItem("token");
 const loginNavBtn = document.getElementById("loginNavBtn");
 const authContainer = document.getElementById("authContainer");
