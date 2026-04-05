@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
+import passport from "passport";
+
 const router = express.Router();
 
 router.post("/signup", async (req, res) => {
@@ -24,8 +26,25 @@ router.post("/login", async (req, res) => {
   if (!user || !(await bcrypt.compare(password, user.password)))
     return res.status(401).json("Invalid credentials");
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,{ expiresIn: "1d" });
   res.json({ token, username });
 });
+
+router.get("/google",
+  passport.authenticate("google", { scope: ["profile"] })
+);
+
+router.get("/google/callback",
+  passport.authenticate("google", { session: false }),
+  (req, res) => {
+    const token = jwt.sign(
+      { id: req.user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.json({ token });
+  }
+);
 
 export default router;
