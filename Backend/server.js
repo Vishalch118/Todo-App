@@ -1,15 +1,17 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import connectDB from "./db.js";
 
 import authRoutes from "./routes/auth.js";
 import taskRoutes from "./routes/tasks.js";
 
-import passport from "./config/passport.js";
 
-dotenv.config();
 connectDB();
+
+const passport = (await import("./config/passport.js")).default;
 
 const app = express();
 
