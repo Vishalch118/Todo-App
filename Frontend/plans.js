@@ -19,7 +19,7 @@ async function buyPlan(plan) {
         const order = await res.json();
 
         const options = {
-            key: "YOUR_RAZORPAY_KEY_ID", // 🔴 replace
+            key: "rzp_test_ScyxBj5hVs2aFc", 
             amount: order.amount,
             currency: "INR",
             name: "TODO App",
