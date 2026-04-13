@@ -189,29 +189,52 @@ function renderTasks() {
         const li = document.createElement("li");
         if (task.completed) li.classList.add("completed");
 
-        const span = document.createElement("span");
-        span.textContent = task.title;
+        let content;
+
+        if (task.isEditing) {
+            content = document.createElement("input");
+            content.value = task.title;
+            content.className = "edit-input";
+
+            content.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") {
+                    updateTaskTitle(task._id, content.value.trim());
+                }
+            });
+
+        } else {
+            content = document.createElement("span");
+            content.textContent = task.title;
+        }
 
         const actions = document.createElement("div");
         actions.className = "actions";
 
         const doneBtn = document.createElement("button");
         doneBtn.textContent = "✓";
+        doneBtn.className = "done";
         doneBtn.onclick = () => toggleTask(task._id, task.completed);
 
         const editBtn = document.createElement("button");
-        editBtn.textContent = "✎";
+        editBtn.textContent = task.isEditing ? "💾" : "✎";
+        editBtn.className = "edit";
+
         editBtn.onclick = () => {
-            const newTitle = prompt("Edit task:", task.title);
-            if (newTitle) updateTaskTitle(task._id, newTitle);
+            if (task.isEditing) {
+                updateTaskTitle(task._id, content.value.trim());
+            } else {
+                task.isEditing = true;
+                renderTasks();
+            }
         };
 
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "✕";
+        deleteBtn.className = "delete";
         deleteBtn.onclick = () => deleteTask(task._id);
 
         actions.append(doneBtn, editBtn, deleteBtn);
-        li.append(span, actions);
+        li.append(content, actions);
         taskList.appendChild(li);
     });
 }
