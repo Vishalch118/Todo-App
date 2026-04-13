@@ -3,8 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
-import passport from "passport";
-
+import passport from "../config/passport.js";
 const router = express.Router();
 
 router.post("/signup", async (req, res) => {
@@ -31,7 +30,10 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "select_account"
+  })
 );
 
 router.get("/google/callback",
@@ -43,7 +45,8 @@ router.get("/google/callback",
       { expiresIn: "1d" }
     );
 
-    res.json({ token });
+    res.redirect(`https://todo-app-psi-six-32.vercel.app/?token=${token}`);
+    
   }
 );
 

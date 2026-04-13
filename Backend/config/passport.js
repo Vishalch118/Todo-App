@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/User.js";
@@ -16,7 +18,8 @@ passport.use(
         if (!user) {
           user = await User.create({
             username: profile.displayName,
-            googleId: profile.id
+            googleId: profile.id,
+            email: profile.emails?.[0]?.value
           });
         }
 
@@ -27,5 +30,7 @@ passport.use(
     }
   )
 );
+
+
 
 export default passport;
