@@ -7,7 +7,7 @@ import connectDB from "./db.js";
 
 import authRoutes from "./routes/auth.js";
 import taskRoutes from "./routes/tasks.js";
-
+import paymentRoutes from "./routes/payment.js";
 
 connectDB();
 
@@ -18,7 +18,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(passport.initialize());
-
+app.use("/api/payment", paymentRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 

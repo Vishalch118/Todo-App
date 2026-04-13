@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Plans</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="plans.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="logo">TODO APP</div>
+    <button onclick="goBack()" class="nav-btn">Back</button>
+</nav>
+
+<section class="hero">
+    <h1>Upgrade Your Plan</h1>
+    <p>Unlock more credits and boost productivity</p>
+</section>
+
+<div class="plans-container">
+
+    <div class="plan-card free">
+        <h3>Free</h3>
+        <p class="price">₹0</p>
+        <ul>
+            <li>3 Credits</li>
+            <li>Basic Usage</li>
+        </ul>
+        <button disabled>Current Plan</button>
+    </div>
+
+    <div class="plan-card pro">
+        <h3>Pro</h3>
+        <p class="price">₹15</p>
+        <ul>
+            <li>150 Credits</li>
+            <li>Best Value</li>
+        </ul>
+        <button onclick="buyPlan('pro')">Buy Pro</button>
+    </div>
+
+    <div class="plan-card premium">
+        <h3>Premium</h3>
+        <p class="price">₹30</p>
+        <ul>
+            <li>350 Credits</li>
+            <li>Power Users</li>
+        </ul>
+        <button onclick="buyPlan('premium')">Buy Premium</button>
+    </div>
+
+</div>
+
+<script src="plans.js"></script>
+</body>
+</html>

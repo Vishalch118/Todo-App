@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <title>TODO</title>
@@ -13,40 +14,48 @@
 
 <!-- NAVBAR -->
 <nav class="navbar">
-    <div class="logo">TODO APP</div>
 
-    <div class="nav-actions">
-        <button id="logoutBtn" class="nav-btn logout">Logout</button>
+    <div class="nav-left">
+        <div class="logo">TODO APP</div>
     </div>
+
+    <div class="nav-center">
+        <span id="creditsDisplay" class="credits" style="display:none;"></span>
+    </div>
+
+    <div class="nav-right">
+        <button id="upgradeBtn" onclick="goToPlans()" class="nav-btn upgrade" style="display:none;">Upgrade</button>
+        <button id="logoutBtn" class="nav-btn logout" style="display:none;">Logout</button>
+    </div>
+
 </nav>
 
-<!-- HERO / HOME -->
+<!-- HERO -->
 <section class="hero">
     <h1>Organize Your Life</h1>
     <p>Simple. Fast. Powerful task management.</p>
 </section>
 
-
-<!-- AUTH SECTION -->
+<!-- AUTH -->
 <div id="authContainer" class="app auth-card">
     <h2 id="authTitle">Login</h2>
 
     <div class="input-group">
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
+
         <button id="authBtn">Login</button>
+
         <button id="googleBtn" class="google-btn">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
             Continue with Google
         </button>
-        
     </div>
 
     <p id="toggleAuth">Don't have an account? <span>Sign Up</span></p>
 </div>
 
-
-<!-- TODO DASHBOARD -->
+<!-- DASHBOARD -->
 <div id="todoContainer" class="app dashboard" style="display:none">
 
     <div class="dashboard-header">

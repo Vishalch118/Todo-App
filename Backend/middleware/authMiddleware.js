@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
 const auth = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -20,6 +21,17 @@ const auth = (req, res, next) => {
   } catch (err) {
     res.status(401).json("Invalid token");
   }
+};
+
+export const checkCredits = async (req, res, next) => {
+  const user = await User.findById(req.userId);
+
+  if (!user || user.credits <= 0) {
+    return res.status(403).json("No credits left");
+  }
+
+  req.user = user;
+  next();
 };
 
 export default auth;

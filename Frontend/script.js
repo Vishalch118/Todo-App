@@ -2,6 +2,7 @@ const API_BASE = "https://todo-backend-o4pf.onrender.com/api";
 
 let token = localStorage.getItem("token");
 let currentUser = localStorage.getItem("username") || null;
+let credits = 0;
 
 const authContainer = document.getElementById("authContainer");
 const todoContainer = document.getElementById("todoContainer");
@@ -17,6 +18,8 @@ const addBtn = document.getElementById("addBtn");
 const taskList = document.getElementById("taskList");
 
 const googleBtn = document.getElementById("googleBtn");
+const upgradeBtn = document.getElementById("upgradeBtn");
+const creditsDisplay = document.getElementById("creditsDisplay");
 
 const params = new URLSearchParams(window.location.search);
 const urlToken = params.get("token");
@@ -35,17 +38,14 @@ async function handleAuth() {
         return;
     }
 
-    if (isLoginMode) {
-        await login(username, password);
-    } else {
-        await signup(username, password);
-    }
+    if (isLoginMode) await login(username, password);
+    else await signup(username, password);
 }
 
 async function signup(username, password) {
     const res = await fetch(`${API_BASE}/auth/signup`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ username, password })
     });
 
@@ -61,7 +61,7 @@ async function signup(username, password) {
 async function login(username, password) {
     const res = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ username, password })
     });
 
@@ -88,7 +88,10 @@ function logout() {
 
     authContainer.style.display = "block";
     todoContainer.style.display = "none";
+
     logoutBtn.style.display = "none";
+    upgradeBtn.style.display = "none";
+    creditsDisplay.style.display = "none";
 }
 
 function toggleMode() {
@@ -107,17 +110,22 @@ function toggleMode() {
 function showApp() {
     authContainer.style.display = "none";
     todoContainer.style.display = "block";
-    logoutBtn.style.display = "block";
+
+    logoutBtn.style.display = "inline-block";
+    upgradeBtn.style.display = "inline-block";
+    creditsDisplay.style.display = "inline-block";
 
     welcomeMsg.textContent = `Hello, ${currentUser || "User"}!`;
+
     loadTasks();
+    fetchCredits();
 }
 
 /* ================= TASKS ================= */
 
 async function loadTasks() {
     const res = await fetch(`${API_BASE}/tasks`, {
-        headers: { Authorization: `Bearer ${token}` } // FIXED
+        headers: { Authorization: `Bearer ${token}` }
     });
 
     tasks = await res.json();
@@ -128,31 +136,55 @@ async function addTask() {
     const text = taskInput.value.trim();
     if (!text) return;
 
-    await fetch(`${API_BASE}/tasks`, {
+    if (credits <= 0) {
+        alert("No credits left. Upgrade your plan.");
+        window.location.href = "plans.html";
+        return;
+    }
+
+    const res = await fetch(`${API_BASE}/tasks`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}` // FIXED
+            Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ title: text })
     });
 
+    if (!res.ok) {
+        alert("Failed to add task");
+        return;
+    }
+
     taskInput.value = "";
+    await fetchCredits();
     loadTasks();
 }
 
 async function updateTaskTitle(id, newTitle) {
     if (!newTitle) return;
 
-    await fetch(`${API_BASE}/tasks/${id}`, {
+    if (credits <= 0) {
+        alert("No credits left.");
+        window.location.href = "plans.html";
+        return;
+    }
+
+    const res = await fetch(`${API_BASE}/tasks/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}` // FIXED
+            Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ title: newTitle })
     });
 
+    if (!res.ok) {
+        alert("Failed to update task");
+        return;
+    }
+
+    await fetchCredits();
     loadTasks();
 }
 
@@ -161,7 +193,7 @@ async function toggleTask(id, completed) {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}` // FIXED
+            Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ completed: !completed })
     });
@@ -173,7 +205,7 @@ async function deleteTask(id) {
     await fetch(`${API_BASE}/tasks/${id}`, {
         method: "DELETE",
         headers: {
-            Authorization: `Bearer ${token}` // FIXED
+            Authorization: `Bearer ${token}`
         }
     });
 
@@ -187,6 +219,7 @@ function renderTasks() {
 
     tasks.forEach(task => {
         const li = document.createElement("li");
+
         if (task.completed) li.classList.add("completed");
 
         let content;
@@ -208,16 +241,13 @@ function renderTasks() {
         }
 
         const actions = document.createElement("div");
-        actions.className = "actions";
 
         const doneBtn = document.createElement("button");
         doneBtn.textContent = "✓";
-        doneBtn.className = "done";
         doneBtn.onclick = () => toggleTask(task._id, task.completed);
 
         const editBtn = document.createElement("button");
         editBtn.textContent = task.isEditing ? "💾" : "✎";
-        editBtn.className = "edit";
 
         editBtn.onclick = () => {
             if (task.isEditing) {
@@ -230,7 +260,6 @@ function renderTasks() {
 
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "✕";
-        deleteBtn.className = "delete";
         deleteBtn.onclick = () => deleteTask(task._id);
 
         actions.append(doneBtn, editBtn, deleteBtn);
@@ -239,10 +268,35 @@ function renderTasks() {
     });
 }
 
-/* ================= GOOGLE LOGIN ================= */
+/* ================= GOOGLE ================= */
 
 function handleGoogleLogin() {
-  window.location.href = "https://todo-backend-o4pf.onrender.com/api/auth/google";
+    window.location.href = "https://todo-backend-o4pf.onrender.com/api/auth/google";
+}
+
+/* ================= CREDITS ================= */
+
+async function fetchCredits() {
+    const res = await fetch(`${API_BASE}/auth/credits`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if (!res.ok) return;
+
+    const data = await res.json();
+    credits = data.credits;
+
+    updateCreditsUI();
+}
+
+function updateCreditsUI() {
+    creditsDisplay.textContent = `Credits: ${credits}`;
+}
+
+function goToPlans() {
+    window.location.href = "plans.html";
 }
 
 /* ================= EVENTS ================= */
@@ -265,8 +319,6 @@ if (googleBtn) {
 if (urlToken) {
     token = urlToken;
     localStorage.setItem("token", token);
-
-    window.history.replaceState({}, document.title, "/");
 }
 
 if (token) {

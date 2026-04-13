@@ -2,7 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-
+import auth from "../middleware/authMiddleware.js";
 import passport from "../config/passport.js";
 const router = express.Router();
 
@@ -49,5 +49,14 @@ router.get("/google/callback",
     
   }
 );
+
+router.get("/credits", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    res.json({ credits: user.credits });
+  } catch (err) {
+    res.status(500).json("Failed to fetch credits");
+  }
+});
 
 export default router;
