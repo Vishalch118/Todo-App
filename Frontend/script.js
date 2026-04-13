@@ -1,6 +1,8 @@
 const API_BASE = "https://todo-backend-o4pf.onrender.com/api";
+
 let token = localStorage.getItem("token");
-const loginNavBtn = document.getElementById("loginNavBtn");
+let currentUser = localStorage.getItem("username") || null;
+
 const authContainer = document.getElementById("authContainer");
 const todoContainer = document.getElementById("todoContainer");
 const authBtn = document.getElementById("authBtn");
@@ -14,10 +16,15 @@ const taskInput = document.getElementById("taskInput");
 const addBtn = document.getElementById("addBtn");
 const taskList = document.getElementById("taskList");
 
-let currentUser = localStorage.getItem("username") || null;
+const googleBtn = document.getElementById("googleBtn");
+
+const params = new URLSearchParams(window.location.search);
+const urlToken = params.get("token");
+
 let isLoginMode = true;
 let tasks = [];
 
+/* ================= AUTH ================= */
 
 async function handleAuth() {
     const username = usernameInput.value.trim();
@@ -64,6 +71,7 @@ async function login(username, password) {
     }
 
     const data = await res.json();
+
     token = data.token;
     currentUser = data.username;
 
@@ -78,17 +86,19 @@ function logout() {
     currentUser = null;
     localStorage.clear();
 
-    document.getElementById("logoutBtn").style.display = "none";
-
     authContainer.style.display = "block";
     todoContainer.style.display = "none";
+    logoutBtn.style.display = "none";
 }
 
 function toggleMode() {
     isLoginMode = !isLoginMode;
+
     document.getElementById("authTitle").textContent =
         isLoginMode ? "Login" : "Sign Up";
+
     authBtn.textContent = isLoginMode ? "Login" : "Sign Up";
+
     toggleAuth.innerHTML = isLoginMode
         ? "Don't have an account? <span>Sign Up</span>"
         : "Already have an account? <span>Login</span>";
@@ -97,17 +107,17 @@ function toggleMode() {
 function showApp() {
     authContainer.style.display = "none";
     todoContainer.style.display = "block";
+    logoutBtn.style.display = "block";
 
-    document.getElementById("logoutBtn").style.display = "block";
-
-    welcomeMsg.textContent = `Hello, ${currentUser}!`;
+    welcomeMsg.textContent = `Hello, ${currentUser || "User"}!`;
     loadTasks();
 }
 
+/* ================= TASKS ================= */
 
 async function loadTasks() {
     const res = await fetch(`${API_BASE}/tasks`, {
-        headers: { Authorization: token }
+        headers: { Authorization: `Bearer ${token}` } // FIXED
     });
 
     tasks = await res.json();
@@ -122,7 +132,7 @@ async function addTask() {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Authorization: token
+            Authorization: `Bearer ${token}` // FIXED
         },
         body: JSON.stringify({ title: text })
     });
@@ -138,7 +148,7 @@ async function updateTaskTitle(id, newTitle) {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            Authorization: token
+            Authorization: `Bearer ${token}` // FIXED
         },
         body: JSON.stringify({ title: newTitle })
     });
@@ -146,13 +156,12 @@ async function updateTaskTitle(id, newTitle) {
     loadTasks();
 }
 
-
 async function toggleTask(id, completed) {
     await fetch(`${API_BASE}/tasks/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            Authorization: token
+            Authorization: `Bearer ${token}` // FIXED
         },
         body: JSON.stringify({ completed: !completed })
     });
@@ -163,12 +172,15 @@ async function toggleTask(id, completed) {
 async function deleteTask(id) {
     await fetch(`${API_BASE}/tasks/${id}`, {
         method: "DELETE",
-        headers: { Authorization: token }
+        headers: {
+            Authorization: `Bearer ${token}` // FIXED
+        }
     });
 
     loadTasks();
 }
 
+/* ================= UI ================= */
 
 function renderTasks() {
     taskList.innerHTML = "";
@@ -177,69 +189,63 @@ function renderTasks() {
         const li = document.createElement("li");
         if (task.completed) li.classList.add("completed");
 
-        let content;
-
-        if (task.isEditing) {
-            content = document.createElement("input");
-            content.value = task.title;
-            content.className = "edit-input";
-        } 
-        else {
-            content = document.createElement("span");
-            content.textContent = task.title;
-        }
+        const span = document.createElement("span");
+        span.textContent = task.title;
 
         const actions = document.createElement("div");
         actions.className = "actions";
 
         const doneBtn = document.createElement("button");
         doneBtn.textContent = "✓";
-        doneBtn.className = "done";
         doneBtn.onclick = () => toggleTask(task._id, task.completed);
 
         const editBtn = document.createElement("button");
-        editBtn.textContent = task.isEditing ? "💾" : "✎";
-        editBtn.className = "edit";
-
+        editBtn.textContent = "✎";
         editBtn.onclick = () => {
-            if (task.isEditing) {
-                const newTitle = content.value.trim();
-                updateTaskTitle(task._id, newTitle);
-            } else {
-                task.isEditing = true;
-                renderTasks();
-            }
+            const newTitle = prompt("Edit task:", task.title);
+            if (newTitle) updateTaskTitle(task._id, newTitle);
         };
 
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "✕";
-        deleteBtn.className = "delete";
         deleteBtn.onclick = () => deleteTask(task._id);
 
         actions.append(doneBtn, editBtn, deleteBtn);
-        li.append(content, actions);
+        li.append(span, actions);
         taskList.appendChild(li);
     });
 }
 
+/* ================= GOOGLE LOGIN ================= */
 
+function handleGoogleLogin() {
+  window.location.href = "https://todo-backend-o4pf.onrender.com/api/auth/google";
+}
+
+/* ================= EVENTS ================= */
 
 authBtn.addEventListener("click", handleAuth);
 logoutBtn.addEventListener("click", logout);
 toggleAuth.addEventListener("click", toggleMode);
 addBtn.addEventListener("click", addTask);
+
 taskInput.addEventListener("keypress", e => {
     if (e.key === "Enter") addTask();
 });
 
-
-if (token && currentUser) {
-    showApp();
+if (googleBtn) {
+    googleBtn.addEventListener("click", handleGoogleLogin);
 }
 
-if(loginNavBtn){
-loginNavBtn.addEventListener("click",()=>{
-    authContainer.style.display="block";
-    todoContainer.style.display="none";
-});
+/* ================= INIT ================= */
+
+if (urlToken) {
+    token = urlToken;
+    localStorage.setItem("token", token);
+
+    window.history.replaceState({}, document.title, "/");
+}
+
+if (token) {
+    showApp();
 }

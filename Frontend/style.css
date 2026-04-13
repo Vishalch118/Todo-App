@@ -206,3 +206,34 @@ border-radius:4px;
 #logoutBtn{
 display:none;
 }
+
+
+/* GOOGLE BUTTON */
+
+.google-btn {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    transition: all 0.2s ease;
+}
+
+.google-btn:hover {
+    background: #f5f5f5;
+    border-color: #ccc;
+}
+
+.google-btn img {
+    width: 18px;
+    height: 18px;
+}
