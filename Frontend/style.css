@@ -101,6 +101,20 @@ border-radius:12px;
 box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
 
+.dashboard-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
+}
+
+/* welcome text */
+
+#welcomeMsg{
+font-size:14px;
+color:#6b7280;
+}
+
 /* AUTH */
 
 .input-group{
@@ -219,4 +233,25 @@ color:black;
 
 .delete{
 background:#ef4444;
+}
+
+/* AUTH TOGGLE FIX */
+
+#toggleAuth{
+text-align:center;
+margin-top:14px;
+font-size:14px;
+color:#6b7280;
+}
+
+#toggleAuth span{
+color:#6366f1;
+font-weight:500;
+cursor:pointer;
+transition:0.2s;
+}
+
+#toggleAuth span:hover{
+color:#4f46e5;
+text-decoration:underline;
 }
