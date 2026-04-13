@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+
+  backend:
+    build: ./Backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./Backend/.env
+
+  frontend:
+    build: ./Frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend

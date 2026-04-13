@@ -1,5 +1,8 @@
-const API_BASE = "https://todo-backend-o4pf.onrender.com/api";
-
+const API_BASE =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000/api"
+    : "https://todo-backend-o4pf.onrender.com/api";
+    
 let token = localStorage.getItem("token");
 let currentUser = localStorage.getItem("username") || null;
 let credits = 0;

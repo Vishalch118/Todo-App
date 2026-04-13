@@ -4,8 +4,11 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import auth from "../middleware/authMiddleware.js";
 import passport from "../config/passport.js";
-const router = express.Router();
 
+const router = express.Router();
+const FRONTEND_URL =
+  process.env.FRONTEND_URL || "http://localhost:3000";
+  
 router.post("/signup", async (req, res) => {
   const { username, password } = req.body;
 
