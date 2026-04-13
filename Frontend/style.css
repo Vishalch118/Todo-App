@@ -54,10 +54,12 @@ color:white;
 
 .nav-btn.upgrade{
 background:#22c55e;
+display:none;
 }
 
 .logout{
 background:#ef4444;
+display:none;
 }
 
 /* CREDITS */
@@ -67,6 +69,7 @@ background: rgba(255,255,255,0.2);
 padding:6px 14px;
 border-radius:20px;
 font-size:14px;
+display:none;
 }
 
 /* HERO */
@@ -153,4 +156,67 @@ justify-content:space-between;
 .actions button{
 margin-left:6px;
 cursor:pointer;
+}
+
+
+/* TASK INPUT */
+
+.input-box{
+display:flex;
+gap:8px;
+margin-bottom:16px;
+}
+
+.input-box input{
+flex:1;
+padding:10px;
+border-radius:8px;
+border:1px solid #ddd;
+}
+
+.input-box button{
+background:#6366f1;
+color:white;
+border:none;
+padding:10px 14px;
+border-radius:8px;
+cursor:pointer;
+}
+
+/* TASK LIST */
+
+li{
+background:#f9fafb;
+padding:10px 12px;
+margin-bottom:8px;
+border-radius:8px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border:1px solid #eee;
+}
+
+/* ACTION BUTTONS */
+
+.actions button{
+border:none;
+padding:5px 8px;
+border-radius:6px;
+margin-left:5px;
+cursor:pointer;
+font-size:12px;
+color:white;
+}
+
+.done{
+background:#22c55e;
+}
+
+.edit{
+background:#fbbf24;
+color:black;
+}
+
+.delete{
+background:#ef4444;
 }

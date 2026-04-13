@@ -137,12 +137,12 @@ async function addTask() {
     if (!text) return;
 
     if (credits <= 0) {
-        alert("No credits left. Upgrade your plan.");
+        alert("No credits left.");
         window.location.href = "plans.html";
         return;
     }
 
-    const res = await fetch(`${API_BASE}/tasks`, {
+    await fetch(`${API_BASE}/tasks`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -150,11 +150,6 @@ async function addTask() {
         },
         body: JSON.stringify({ title: text })
     });
-
-    if (!res.ok) {
-        alert("Failed to add task");
-        return;
-    }
 
     taskInput.value = "";
     await fetchCredits();
@@ -170,7 +165,7 @@ async function updateTaskTitle(id, newTitle) {
         return;
     }
 
-    const res = await fetch(`${API_BASE}/tasks/${id}`, {
+    await fetch(`${API_BASE}/tasks/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -178,11 +173,6 @@ async function updateTaskTitle(id, newTitle) {
         },
         body: JSON.stringify({ title: newTitle })
     });
-
-    if (!res.ok) {
-        alert("Failed to update task");
-        return;
-    }
 
     await fetchCredits();
     loadTasks();
@@ -204,9 +194,7 @@ async function toggleTask(id, completed) {
 async function deleteTask(id) {
     await fetch(`${API_BASE}/tasks/${id}`, {
         method: "DELETE",
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
     });
 
     loadTasks();
@@ -241,13 +229,18 @@ function renderTasks() {
         }
 
         const actions = document.createElement("div");
+        actions.className = "actions";
+
+        /* 🔥 FIXED BUTTON COLORS */
 
         const doneBtn = document.createElement("button");
         doneBtn.textContent = "✓";
+        doneBtn.className = "done";
         doneBtn.onclick = () => toggleTask(task._id, task.completed);
 
         const editBtn = document.createElement("button");
         editBtn.textContent = task.isEditing ? "💾" : "✎";
+        editBtn.className = "edit";
 
         editBtn.onclick = () => {
             if (task.isEditing) {
@@ -260,6 +253,7 @@ function renderTasks() {
 
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "✕";
+        deleteBtn.className = "delete";
         deleteBtn.onclick = () => deleteTask(task._id);
 
         actions.append(doneBtn, editBtn, deleteBtn);
@@ -271,16 +265,14 @@ function renderTasks() {
 /* ================= GOOGLE ================= */
 
 function handleGoogleLogin() {
-    window.location.href = "https://todo-backend-o4pf.onrender.com/api/auth/google";
+    window.location.href = `${API_BASE}/auth/google`;
 }
 
 /* ================= CREDITS ================= */
 
 async function fetchCredits() {
     const res = await fetch(`${API_BASE}/auth/credits`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
     });
 
     if (!res.ok) return;
@@ -288,12 +280,10 @@ async function fetchCredits() {
     const data = await res.json();
     credits = data.credits;
 
-    updateCreditsUI();
-}
-
-function updateCreditsUI() {
     creditsDisplay.textContent = `Credits: ${credits}`;
 }
+
+/* ================= NAV ================= */
 
 function goToPlans() {
     window.location.href = "plans.html";
