@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify Login - TODO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Specific styles for the OTP page */
+        .otp-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 20px;
+            margin-top: -5px;
+        }
+        .otp-input {
+            text-align: center;
+            font-size: 24px;
+            letter-spacing: 12px;
+            font-weight: 600;
+        }
+        .otp-input::placeholder {
+            letter-spacing: normal;
+            font-weight: 400;
+        }
+        .error-msg {
+            color: #ef4444;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+        #verifyBtn {
+            background: #764ba2;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        #verifyBtn:hover {
+            background: #663b92;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo">TODO APP</div>
+        </div>
+    </nav>
+
+    <div class="app auth-card" style="margin-top: 80px;">
+        <h2 style="text-align: center;">Security Check</h2>
+        <p class="otp-subtitle">We sent a 4-digit code to your Google email.</p>
+
+        <div class="input-group">
+            <input type="text" id="otpInput" class="otp-input" placeholder="0000" maxlength="4" autocomplete="off">
+            <button id="verifyBtn">Verify Code</button>
+        </div>
+
+        <p id="errorMsg" class="error-msg">Invalid or expired code.</p>
+        
+        <p id="toggleAuth" style="margin-top: 20px;">
+            Didn't receive it? <span onclick="window.location.href='index.html'">Back to Login</span>
+        </p>
+    </div>
+
+    <script>
+        const verifyBtn = document.getElementById('verifyBtn');
+        const otpInput = document.getElementById('otpInput');
+        const errorMsg = document.getElementById('errorMsg');
+
+        // Note: Change this URL if you test locally (e.g., http://localhost:5000/api/auth/verify-otp)
+        const BACKEND_URL = "https://todo-backend-o4pf.onrender.com/api/auth/verify-otp";
+
+        verifyBtn.addEventListener('click', async () => {
+            const otp = otpInput.value.trim();
+            
+            // Extract the tempToken from the URL (e.g., ?tempToken=eyJhbG...)
+            const urlParams = new URLSearchParams(window.location.search);
+            const tempToken = urlParams.get('tempToken');
+
+            // Basic frontend validation
+            if (!otp || otp.length !== 4 || isNaN(otp)) {
+                errorMsg.textContent = "Please enter a valid 4-digit number.";
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            if (!tempToken) {
+                errorMsg.textContent = "Authentication error. Please log in again.";
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            // Disable button to prevent double-clicks
+            verifyBtn.textContent = "Verifying...";
+            verifyBtn.disabled = true;
+            errorMsg.style.display = "none";
+
+            try {
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ tempToken, otp })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Success! Save the final token and redirect to the dashboard
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('username', data.username);
+                    window.location.href = 'index.html'; 
+                } else {
+                    // Show backend error (e.g., "Invalid or expired OTP")
+                    errorMsg.textContent = data || "Verification failed.";
+                    errorMsg.style.display = "block";
+                    verifyBtn.textContent = "Verify Code";
+                    verifyBtn.disabled = false;
+                }
+            } catch (err) {
+                console.error("Verification error:", err);
+                errorMsg.textContent = "Server error. Please try again later.";
+                errorMsg.style.display = "block";
+                verifyBtn.textContent = "Verify Code";
+                verifyBtn.disabled = false;
+            }
+        });
+
+        // Allow pressing "Enter" to submit the OTP
+        otpInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                verifyBtn.click();
+            }
+        });
+    </script>
+
+</body>
+</html>

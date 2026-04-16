@@ -2,7 +2,7 @@ const API_BASE =
   window.location.hostname === "localhost"
     ? "http://localhost:5000/api"
     : "https://todo-backend-o4pf.onrender.com/api";
-    
+
 let token = localStorage.getItem("token");
 let currentUser = localStorage.getItem("username") || null;
 let credits = 0;
@@ -23,9 +23,6 @@ const taskList = document.getElementById("taskList");
 const googleBtn = document.getElementById("googleBtn");
 const upgradeBtn = document.getElementById("upgradeBtn");
 const creditsDisplay = document.getElementById("creditsDisplay");
-
-const params = new URLSearchParams(window.location.search);
-const urlToken = params.get("token");
 
 let isLoginMode = true;
 let tasks = [];
@@ -307,12 +304,6 @@ if (googleBtn) {
     googleBtn.addEventListener("click", handleGoogleLogin);
 }
 
-/* ================= INIT ================= */
-
-if (urlToken) {
-    token = urlToken;
-    localStorage.setItem("token", token);
-}
 
 if (token) {
     showApp();
