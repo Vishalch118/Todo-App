@@ -255,3 +255,14 @@ transition:0.2s;
 color:#4f46e5;
 text-decoration:underline;
 }
+
+li.completed {
+    background: #e5e7eb; 
+    border-color: #d1d5db;
+    opacity: 0.8; 
+}
+
+li.completed span {
+    text-decoration: line-through; 
+    color: #9ca3af; 
+}

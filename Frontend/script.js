@@ -187,7 +187,7 @@ async function toggleTask(id, completed) {
         },
         body: JSON.stringify({ completed: !completed })
     });
-
+    await fetchCredits();
     loadTasks();
 }
 
