@@ -12,7 +12,7 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-/* CREATE ORDER */
+//creates an order
 router.post("/create-order", auth, async (req, res) => {
   try {
     const { plan } = req.body;
@@ -33,7 +33,7 @@ router.post("/create-order", auth, async (req, res) => {
   }
 });
 
-/* VERIFY PAYMENT + ADD CREDITS */
+//VERIFY PAYMENT + ADD CREDITS
 router.post("/verify-payment", auth, async (req, res) => {
   try {
     const { plan } = req.body;

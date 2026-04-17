@@ -2,13 +2,13 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
 const auth = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization;  //Bearer abcd123
 
   if (!authHeader) {
     return res.status(401).json("No token provided");
   }
 
-  const token = authHeader.split(" ")[1];
+  const token = authHeader.split(" ")[1]; //abcd123
 
   if (!token) {
     return res.status(401).json("No token provided");

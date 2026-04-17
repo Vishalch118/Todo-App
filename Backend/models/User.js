@@ -10,4 +10,6 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true, sparse: true }
 });
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema); 
+//User is the model of the schema , so other files can import it and use it to
+//  interact with the users collection in the database.

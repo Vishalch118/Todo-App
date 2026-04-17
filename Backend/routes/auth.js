@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer"; // <-- ADDED: For sending emails
+import nodemailer from "nodemailer"; 
 import User from "../models/User.js";
 import auth from "../middleware/authMiddleware.js";
 import passport from "../config/passport.js";
@@ -9,7 +9,7 @@ import passport from "../config/passport.js";
 const router = express.Router();
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
-// --- NODEMAILER CONFIGURATION ---
+//  NODEMAILER CONFIGURATION 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -18,7 +18,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// --- EXISTING LOCAL AUTH (Unchanged) ---
 router.post("/signup", async (req, res) => {
   const { username, password } = req.body;
 
@@ -42,7 +41,7 @@ router.post("/login", async (req, res) => {
   res.json({ token, username });
 });
 
-// --- GOOGLE OAUTH FLOW ---
+//GOOGLE OAUTH FLOW
 router.get("/google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
@@ -55,17 +54,16 @@ router.get("/google/callback",
   passport.authenticate("google", { session: false }),
   async (req, res) => {
     try {
-      // 1. Generate 4-digit OTP
+      //Generates 4-digit OTP
       const otp = Math.floor(1000 + Math.random() * 9000).toString();
 
-      // 2. Save OTP and expiration (5 mins) to the database
+      //Saves OTP and expiration (5 mins) to the database
       const user = await User.findById(req.user._id);
       user.otp = otp;
-      user.otpExpires = Date.now() + 5 * 60 * 1000;
+      user.otpExpires = Date.now() + 5 * 60 * 1000; //5 mins
       await user.save();
 
-      // 3. Send the OTP via Email
-      // Note: Ensure your passport strategy saves the Google email to req.user.email
+      // Sends the OTP via Email
       const mailOptions = {
         from: process.env.EMAIL_USER,
         to: req.user.email, 
@@ -74,54 +72,54 @@ router.get("/google/callback",
       };
       await transporter.sendMail(mailOptions);
 
-      // 4. Generate a temporary JWT (valid only for 5 minutes)
+      //Generates a temporary JWT (valid only for 5 minutes)
       const tempToken = jwt.sign(
         { id: req.user._id, isTemp: true },
         process.env.JWT_SECRET,
         { expiresIn: "5m" }
       );
 
-      // 5. Redirect to a new OTP frontend page with the temporary token
-      res.redirect(`https://todo-app-psi-six-32.vercel.app/verify-otp.html?tempToken=${tempToken}`);
+      // Redirects to a new OTP frontend page with the temporary token
+      res.redirect(`${frontendURL}/verify-otp.html?tempToken=${tempToken}`);
 
     } catch (error) {
       console.error("Error during Google Callback:", error);
-      res.redirect(`https://todo-app-psi-six-32.vercel.app/?error=auth_failed`);
+      res.redirect(`${process.env.FRONTEND_URL}/?error=auth_failed`);
     }
   }
 );
 
-// NEW ROUTE: Verify the OTP and issue the final token
+//Verify the OTP and issue the final token
 router.post("/verify-otp", async (req, res) => {
   const { tempToken, otp } = req.body;
 
   try {
-    // 1. Validate the temporary token
+    //Validates the temporary token
     const decoded = jwt.verify(tempToken, process.env.JWT_SECRET);
     if (!decoded.isTemp) return res.status(400).json("Invalid token type");
 
-    // 2. Find the user
+    //Finds the user
     const user = await User.findById(decoded.id);
     if (!user) return res.status(404).json("User not found");
 
-    // 3. Check if OTP matches and is not expired
+    //Checks if OTP matches and is not expired
     if (user.otp !== otp || user.otpExpires < Date.now()) {
       return res.status(400).json("Invalid or expired OTP");
     }
 
-    // 4. Success! Clear the OTP from the database
+    //Clears the OTP from the database
     user.otp = null;
     user.otpExpires = null;
     await user.save();
 
-    // 5. Issue the final, fully-privileged JWT
+    //Issues the final, fully-privileged JWT that will be used by user from now on.
     const finalToken = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-    // Send token back to frontend to complete login
+    //Send token back to frontend to complete login
     res.json({ token: finalToken, username: user.username });
 
   } catch (error) {
@@ -130,7 +128,7 @@ router.post("/verify-otp", async (req, res) => {
   }
 });
 
-// --- EXISTING PROTECTED ROUTE (Unchanged) ---
+//fetches user credits
 router.get("/credits", auth, async (req, res) => {
   try {
     const user = await User.findById(req.userId);
