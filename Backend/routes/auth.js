@@ -80,7 +80,7 @@ router.get("/google/callback",
       );
 
       // Redirects to a new OTP frontend page with the temporary token
-      res.redirect(`${frontendURL}/verify-otp.html?tempToken=${tempToken}`);
+      res.redirect(`${process.env.FRONTEND_URL}/verify-otp.html?tempToken=${tempToken}`);
 
     } catch (error) {
       console.error("Error during Google Callback:", error);
